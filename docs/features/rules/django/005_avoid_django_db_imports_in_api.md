@@ -7,6 +7,10 @@ a way more complex integration test.
 
 Note that imports for type-hinting purposes are fine.
 
+## Test Files
+
+Test files (files starting with `test_`) are automatically excluded from this rule, even if they are located within the `api/` directory structure. This allows test files to import from `django.db` as needed for testing purposes.
+
 *Wrong:*
 
 ```python

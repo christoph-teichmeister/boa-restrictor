@@ -1,5 +1,8 @@
 # Changelog
 
+**Unreleased**
+  * Fixed: Exclude test files (starting with `test_`) from `DBR002` and `DBR005` checks to prevent false positives when test files are located within `views/` or `api/` directories
+
 **1.13.3** (2026-03-30)
 * Maintenance via ambient-package-update
 
