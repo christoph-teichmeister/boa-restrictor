@@ -16,6 +16,9 @@ class NoDjangoDbImportInViewsRule(Rule):
     def is_view_file(self, path: Path) -> bool:
         path = path.resolve()
 
+        if path.name.startswith("test_"):
+            return False
+
         if path.name == "views.py":
             return True
 

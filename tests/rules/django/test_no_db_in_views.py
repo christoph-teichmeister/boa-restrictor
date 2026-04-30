@@ -190,3 +190,13 @@ def test_check_other_ifs_are_ignored():
         rule_label=NoDjangoDbImportInViewsRule.RULE_LABEL,
         identifier=None,
     )
+
+
+def test_check_test_file_in_views_dir_is_ok():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInViewsRule.run_check(
+        file_path=Path("/path/to/views/test_user_views.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0

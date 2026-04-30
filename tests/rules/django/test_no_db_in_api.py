@@ -160,3 +160,13 @@ def test_check_other_ifs_are_ignored():
         rule_label=NoDjangoDbImportInApiRule.RULE_LABEL,
         identifier=None,
     )
+
+
+def test_check_test_file_in_api_dir_is_ok():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInApiRule.run_check(
+        file_path=Path("/path/to/api/test_user_api.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0

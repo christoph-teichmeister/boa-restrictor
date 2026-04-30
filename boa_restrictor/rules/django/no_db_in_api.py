@@ -16,6 +16,9 @@ class NoDjangoDbImportInApiRule(Rule):
     def is_api_file(self, path: Path) -> bool:
         path = path.resolve()
 
+        if path.name.startswith("test_"):
+            return False
+
         if path.name == "api.py":
             return True
 
