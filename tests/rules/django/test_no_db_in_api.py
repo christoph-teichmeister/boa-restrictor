@@ -195,9 +195,7 @@ def test_check_test_file_with_db_import_in_api_dir():
 def test_check_exact_test_api_filename_in_api_dir():
     source_tree = ast.parse("""import django.db.models""")
 
-    occurrences = NoDjangoDbImportInApiRule.run_check(
-        file_path=Path("/app/api/test_api.py"), source_tree=source_tree
-    )
+    occurrences = NoDjangoDbImportInApiRule.run_check(file_path=Path("/app/api/test_api.py"), source_tree=source_tree)
 
     assert len(occurrences) == 0
 
