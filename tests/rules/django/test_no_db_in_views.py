@@ -200,3 +200,53 @@ def test_check_test_file_in_views_dir_is_ok():
     )
 
     assert len(occurrences) == 0
+
+
+def test_check_test_file_with_from_import_in_views_dir():
+    source_tree = ast.parse("""from django.db import models""")
+
+    occurrences = NoDjangoDbImportInViewsRule.run_check(
+        file_path=Path("/path/to/views/test_models.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_test_file_with_db_import_in_views_dir():
+    source_tree = ast.parse("""from django import db""")
+
+    occurrences = NoDjangoDbImportInViewsRule.run_check(
+        file_path=Path("/path/to/views/test_database.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_exact_test_views_filename_in_views_dir():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInViewsRule.run_check(
+        file_path=Path("/app/views/test_views.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_test_file_in_tests_views_subdir():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInViewsRule.run_check(
+        file_path=Path("/app/tests/views/test_serializers.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_non_test_file_in_tests_views_subdir_still_fails():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInViewsRule.run_check(
+        file_path=Path("/app/tests/views/serializers.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 1

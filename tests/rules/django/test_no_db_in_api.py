@@ -170,3 +170,53 @@ def test_check_test_file_in_api_dir_is_ok():
     )
 
     assert len(occurrences) == 0
+
+
+def test_check_test_file_with_from_import_in_api_dir():
+    source_tree = ast.parse("""from django.db import models""")
+
+    occurrences = NoDjangoDbImportInApiRule.run_check(
+        file_path=Path("/path/to/api/test_models.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_test_file_with_db_import_in_api_dir():
+    source_tree = ast.parse("""from django import db""")
+
+    occurrences = NoDjangoDbImportInApiRule.run_check(
+        file_path=Path("/path/to/api/test_database.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_exact_test_api_filename_in_api_dir():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInApiRule.run_check(
+        file_path=Path("/app/api/test_api.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_test_file_in_tests_api_subdir():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInApiRule.run_check(
+        file_path=Path("/app/tests/api/test_serializers.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 0
+
+
+def test_check_non_test_file_in_tests_api_subdir_still_fails():
+    source_tree = ast.parse("""import django.db.models""")
+
+    occurrences = NoDjangoDbImportInApiRule.run_check(
+        file_path=Path("/app/tests/api/serializers.py"), source_tree=source_tree
+    )
+
+    assert len(occurrences) == 1
