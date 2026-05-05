@@ -1,7 +1,26 @@
 # Changelog
 
-**1.13.4** (2026-04-30)
+**1.14.2** (2026-05-05)
   * Fixed: Exclude test files (starting with `test_`) from `DBR002` and `DBR005` checks to prevent false positives when test files are located within `views/` or `api/` directories
+
+**1.14.1** (2026-05-05)
+* Documented that custom rule prefixes need to be added to ruff's `[tool.ruff.lint].external` setting
+
+**1.14.0** (2026-05-05)
+* Added support for project-specific (custom) rules via the `custom_rules` setting in `pyproject.toml`
+* Generalised `# noqa: <CODE>` detection to recognise custom rule IDs (no longer limited to `PBR`/`DBR` prefixes)
+* Fixed a bug where `# noqa` codes were matched as substrings (`# noqa: PBR0011` could mute `PBR001`); codes are now
+  matched exactly
+* Fixed a bug where code-shaped tokens *outside* the `# noqa:` payload (e.g. `# fixes PBR001 ticket  # noqa: PBR002`)
+  silently widened the suppression set; only codes after `# noqa:` and before any subsequent `#` are now honoured
+* Accept uppercase (`# NOQA:`) and whitespace-tolerant (`#noqa:PBR001`) noqa directives, matching flake8/ruff
+* Fixed a bug in the `exclude` list where a single invalid rule ID silently disabled all other exclusions for that rule;
+  invalid IDs now warn but valid ones are still honoured
+* Malformed source files (e.g. unterminated triple-quoted strings) now produce the user-friendly
+  `BoaRestrictorParsingError` instead of a raw `tokenize.TokenError`
+* Custom rules are validated eagerly at load time: `RULE_ID` must match `^[A-Z]+\d+$` (e.g. `MYP001`), and both
+  `RULE_ID` and `RULE_LABEL` must be strings — misconfigured rules fail the run with a clear message before any file is
+  linted
 
 **1.13.3** (2026-03-30)
   * Maintenance via ambient-package-update
