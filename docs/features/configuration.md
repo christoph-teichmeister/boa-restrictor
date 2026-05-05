@@ -105,6 +105,9 @@ class NoFooBarRule(Rule):
 Custom rules participate in the same exclusion mechanisms as the built-ins
 (`exclude`, `per-file-excludes`, and `# noqa: <rule_id>`).
 
+If you use ruff, remember to add your custom rule prefix to `[tool.ruff.lint].external`
+as well — see [noqa & ruff support](#noqa-ruff-support).
+
 ### Rule ID requirements
 
 * The `PBR` and `DBR` prefixes are reserved for built-in rules. Pick any other prefix.
@@ -199,6 +202,14 @@ statements from your codebase.
 # Avoiding flagging (and removing) any codes starting with `PBR` from any
 # `# noqa` directives, despite Ruff's lack of support for `boa-restrictor`.
 external = ["PBR", "DBR"]
+```
+
+If you have registered [project-specific custom rules](#project-specific-custom-rules), add their
+prefixes here as well — otherwise ruff will strip your `# noqa: MYP001` comments:
+
+```toml
+[tool.ruff.lint]
+external = ["PBR", "DBR", "MYP"]
 ```
 
 https://docs.astral.sh/ruff/settings/#lint_extend-unsafe-fixes

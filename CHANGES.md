@@ -1,5 +1,8 @@
 # Changelog
 
+**1.14.1** (2026-05-05)
+* Documented that custom rule prefixes need to be added to ruff's `[tool.ruff.lint].external` setting
+
 **1.14.0** (2026-05-05)
 * Added support for project-specific (custom) rules via the `custom_rules` setting in `pyproject.toml`
 * Generalised `# noqa: <CODE>` detection to recognise custom rule IDs (no longer limited to `PBR`/`DBR` prefixes)
