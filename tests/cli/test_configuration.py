@@ -71,6 +71,13 @@ def test_is_rule_excluded_invalid_rule(mocked_warn):
     mocked_warn.assert_called_once()
 
 
+@mock.patch.object(warnings, "warn")
+def test_is_rule_excluded_invalid_rule_does_not_disable_other_exclusions(mocked_warn):
+    """A typo in the exclusion list must warn but still honour the remaining valid IDs."""
+    assert is_rule_excluded(rule_class=AsteriskRequiredRule, excluded_rules=["TYPO123", "PBR001"]) is True
+    mocked_warn.assert_called_once()
+
+
 def test_is_rule_excluded_per_file_is_excluded():
     assert (
         is_rule_excluded_per_file(
@@ -124,3 +131,38 @@ def test_is_rule_excluded_per_file_exclude_subdirectory():
         )
         is True
     )
+
+
+def test_is_rule_excluded_active_rule_ids_recognises_custom_rule():
+    """A rule ID in active_rule_ids must not trigger the Invalid rule warning."""
+    with mock.patch.object(warnings, "warn") as mocked_warn:
+        result = is_rule_excluded(
+            rule_class=AsteriskRequiredRule,
+            excluded_rules=["TST001"],
+            active_rule_ids={"PBR001", "TST001"},
+        )
+    mocked_warn.assert_not_called()
+    assert result is False
+
+
+def test_is_rule_excluded_active_rule_ids_warns_on_unknown_id():
+    with mock.patch.object(warnings, "warn") as mocked_warn:
+        is_rule_excluded(
+            rule_class=AsteriskRequiredRule,
+            excluded_rules=["UNK999"],
+            active_rule_ids={"PBR001", "TST001"},
+        )
+    mocked_warn.assert_called_once()
+
+
+def test_is_rule_excluded_per_file_passes_active_rule_ids_through():
+    """The per-file check must thread active_rule_ids into is_rule_excluded."""
+    with mock.patch.object(warnings, "warn") as mocked_warn:
+        result = is_rule_excluded_per_file(
+            filename="apps/file.py",
+            rule_class=AsteriskRequiredRule,
+            per_file_excluded_rules={"*.py": ["TST001"]},
+            active_rule_ids={"PBR001", "TST001"},
+        )
+    mocked_warn.assert_not_called()
+    assert result is False
